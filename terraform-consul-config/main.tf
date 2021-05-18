@@ -1,5 +1,6 @@
 provider "hcs" {}
 
+# when possible better to use provider data source instead of remote state
 data "hcs_cluster" "default" {
   resource_group_name      = var.resource_group_name
   managed_application_name = var.managed_application_name
@@ -7,10 +8,22 @@ data "hcs_cluster" "default" {
   cluster_name = var.cluster_name
 }
 
+# but remote state is required to fetch the token
+data "terraform_remote_state" "hcs-cluster" {
+  backend = "remote"
+
+  config = {
+    organization = var.organization_name
+    workspaces = {
+      name = var.hcs_cluster_workspace_name
+    }
+  }
+}
+
 provider "consul" {
   address    = trimprefix(data.hcs_cluster.default.consul_external_endpoint_url, "https://")
   datacenter = "dc1"
-  token      = var.consul_root_token_secret_id
+  token      = data.terraform_remote_state.hcs-cluster.outputs.consul_root_token_secret_id
 }
 
 resource "consul_acl_policy" "vm" {

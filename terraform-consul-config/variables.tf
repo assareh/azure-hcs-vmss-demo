@@ -14,12 +14,16 @@ variable "cluster_name" {
   description = "HCS Cluster name (the value of var.prefix in terraform-hcs-cluster)"
 }
 
-variable "consul_root_token_secret_id" {
-  description = "HCS Cluster root token secret ID (consul_root_token_secret_id output in terraform-hcs-cluster)"
+variable "hcs_cluster_workspace_name" {
+  description = "Name of the workspace associated with terraform-hcs-cluster"
 }
 
 variable "managed_application_name" {
   description = "HCS Managed Application name (the value of var.prefix in terraform-hcs-cluster)"
+}
+
+variable "organization_name" {
+  description = "Terraform Cloud organization name"
 }
 
 variable "resource_group_name" {
