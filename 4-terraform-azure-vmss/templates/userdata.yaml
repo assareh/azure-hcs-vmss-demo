@@ -1,0 +1,21 @@
+#cloud-config
+write_files:
+  - path: /etc/consul.d/consul.hcl
+    content: ${consul_conf}
+    permissions: '0644'
+    owner: consul:consul
+    encoding: b64
+  - path: /etc/consul.d/ca.pem
+    content: ${ca_file}
+    permissions: '0644'
+    owner: consul:consul
+    encoding: b64
+  - path: /etc/consul.d/web-server.json
+    content: ${web_service}
+    permissions: '0644'
+    owner: consul:consul
+    encoding: b64
+
+runcmd:
+  - systemctl enable consul
+  - systemctl restart consul
