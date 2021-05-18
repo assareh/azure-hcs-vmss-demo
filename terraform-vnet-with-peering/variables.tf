@@ -24,10 +24,6 @@ variable "managed_application_name" {
   description = "HCS Managed Application name (the value of var.prefix in terraform-hcs-cluster)"
 }
 
-variable "prefix" {
-  description = "Name prefix to add to the resources"
-}
-
 // Tags
 locals {
   common_tags = {
