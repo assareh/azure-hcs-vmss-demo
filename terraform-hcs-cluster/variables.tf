@@ -14,11 +14,11 @@ variable "email" {
   description = "My email address"
 }
 
-variable "prefix" {
-  description = "Name prefix to add to the resources"
+variable "location" {
+  description = "The location where the resources are created."
+  default     = "West US 2"
 }
 
-variable "region" {
-  description = "The region where the resources are created."
-  default     = "us-west-2"
+variable "prefix" {
+  description = "Name prefix to add to the resources"
 }

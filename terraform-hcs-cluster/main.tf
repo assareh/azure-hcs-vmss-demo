@@ -4,7 +4,7 @@ provider "azurerm" {
 
 resource "azurerm_resource_group" "hcs" {
   name     = var.prefix
-  location = var.region
+  location = var.location
   tags     = local.common_tags
 }
 
