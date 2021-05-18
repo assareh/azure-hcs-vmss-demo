@@ -1,7 +1,9 @@
-# output "vm-token" {
-#   value = consul_acl_token.vm.id
-# }
+output "vm-token" {
+  sensitive = true
+  value     = consul_acl_token.vm.id
+}
 
-# output "web-token" {
-#   value = consul_acl_token.web.id
-# }
+output "web-token" {
+  sensitive = true
+  value     = consul_acl_token.web.id
+}

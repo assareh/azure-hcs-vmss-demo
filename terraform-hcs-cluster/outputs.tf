@@ -11,7 +11,8 @@ output "consul_ca_file" {
 }
 
 output "consul_root_token_secret_id" {
-  value = hcs_cluster.example.consul_root_token_secret_id
+  sensitive = true
+  value     = hcs_cluster.example.consul_root_token_secret_id
 }
 
 output "vnet_id" {
