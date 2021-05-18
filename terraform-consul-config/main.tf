@@ -23,6 +23,7 @@ data "terraform_remote_state" "hcs-cluster" {
 provider "consul" {
   address    = trimprefix(data.hcs_cluster.default.consul_external_endpoint_url, "https://")
   datacenter = "dc1"
+  scheme     = "https"
   token      = data.terraform_remote_state.hcs-cluster.outputs.consul_root_token_secret_id
 }
 
