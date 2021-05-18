@@ -150,7 +150,7 @@ resource "azurerm_network_interface" "bastion_nic" {
 
   ip_configuration {
     name                          = "${var.prefix}-nic"
-    subnet_id                     = data.terraform_remote_state.network.outputs.subnet_id
+    subnet_id                     = data.azurerm_subnet.hashidemos.id
     private_ip_address_allocation = "dynamic"
     public_ip_address_id          = azurerm_public_ip.bastion_ip.id
   }
