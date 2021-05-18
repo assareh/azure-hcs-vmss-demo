@@ -1,6 +1,6 @@
 #cloud-config
 write_files:
-  - path: /etc/consul.d/consul.hcl
+  - path: /etc/consul.d/consul.json
     content: ${consul_conf}
     permissions: '0644'
     owner: consul:consul

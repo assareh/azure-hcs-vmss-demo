@@ -19,7 +19,3 @@ output "ssh_private_key" {
 output "vmss_principal_id" {
   value = azurerm_linux_virtual_machine_scale_set.main.identity.0.principal_id
 }
-
-output "consul_config_file" {
-  value = base64decode(data.hcs_cluster.default.consul_config_file)
-}
