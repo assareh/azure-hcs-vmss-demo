@@ -30,7 +30,7 @@ locals {
     owner              = "assareh"
     se-region          = "AMER - West E2 - R2"
     purpose            = "Demo Terraform and Consul"
-    ttl                = "-1"    #hours
+    ttl                = "-1"    # hours
     terraform          = "true"  # true/false
     hc-internet-facing = "false" # true/false
   }

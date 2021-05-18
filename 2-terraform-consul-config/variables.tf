@@ -1,15 +1,3 @@
-// Tags
-locals {
-  common_tags = {
-    owner              = "assareh"
-    se-region          = "AMER - West E2 - R2"
-    purpose            = "Demo Terraform and Consul"
-    ttl                = "-1"   #hours
-    terraform          = "true" # true/false
-    hc-internet-facing = "true" # true/false
-  }
-}
-
 variable "cluster_name" {
   description = "HCS Cluster name (the value of var.prefix in terraform-hcs-cluster)"
 }
@@ -28,4 +16,16 @@ variable "organization_name" {
 
 variable "resource_group_name" {
   description = "HCS Resource Group name (the value of var.prefix in terraform-hcs-cluster)"
+}
+
+// Tags
+locals {
+  common_tags = {
+    owner              = "assareh"
+    se-region          = "AMER - West E2 - R2"
+    purpose            = "Demo Terraform and Consul"
+    ttl                = "-1"   # hours
+    terraform          = "true" # true/false
+    hc-internet-facing = "true" # true/false
+  }
 }
