@@ -9,3 +9,5 @@ terraform-azure-vmss requires a packer template
 2. terraform-consul-config
 3. terraform-vnet-with-peering
 4. terraform-azure-vmss
+
+need to automate fetching the gossip encryption key
