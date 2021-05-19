@@ -17,7 +17,8 @@ write_files:
     encoding: b64
 
 runcmd:
-  - sed -i 's+./ca.pem+/etc/consul.d/ca.pem+g' /etc/consul.d/consul.json
   - sed -i 's+{"acl":{+{"acl":{"tokens":{"agent":"${acl_token}"},+g' /etc/consul.d/consul.json
+  - sed -i 's+./ca.pem+/etc/consul.d/ca.pem+g' /etc/consul.d/consul.json
+  - sed -i 's+"dc1","encrypt"+"dc1","enable_local_script_checks":true,"encrypt"+g' /etc/consul.d/consul.json
   - systemctl enable consul
   - systemctl restart consul
