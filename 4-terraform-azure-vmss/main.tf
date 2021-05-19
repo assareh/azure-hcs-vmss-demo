@@ -112,7 +112,7 @@ resource "azurerm_public_ip" "bastion_ip" {
   name                = "${var.prefix}-bastion-ip"
   location            = data.azurerm_resource_group.demo.location
   resource_group_name = data.azurerm_resource_group.demo.name
-  allocation_method   = "Dynamic"
+  allocation_method   = "Static"
   tags                = local.common_tags
 }
 
