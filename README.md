@@ -10,4 +10,5 @@ terraform-azure-vmss requires a packer template
 3. terraform-vnet-with-peering
 4. terraform-azure-vmss
 
-need to automate fetching the gossip encryption key
+would be nice to get SSH key onto the bastion host
+or use Boundary

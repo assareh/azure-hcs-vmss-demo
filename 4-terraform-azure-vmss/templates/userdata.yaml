@@ -17,5 +17,6 @@ write_files:
     encoding: b64
 
 runcmd:
+  - sed -i '/ca_file/c\ca_file                 = "/etc/consul.d/ca.pem"' /etc/consul.d/consul.json
   - systemctl enable consul
   - systemctl restart consul

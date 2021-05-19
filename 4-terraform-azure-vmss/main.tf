@@ -79,13 +79,13 @@ resource "azurerm_linux_virtual_machine_scale_set" "main" {
   location                        = data.azurerm_resource_group.hashidemos.location
   sku                             = "Standard_B1s"
   instances                       = 1
-  admin_username                  = "ubuntu"
+  admin_username                  = "azureuser"
   disable_password_authentication = true
 
   source_image_id = data.azurerm_image.packer.id
 
   admin_ssh_key {
-    username   = "ubuntu"
+    username   = "azureuser"
     public_key = tls_private_key.hashidemos.public_key_openssh
   }
 
