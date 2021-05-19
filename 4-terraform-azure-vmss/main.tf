@@ -154,6 +154,19 @@ resource "azurerm_network_interface_security_group_association" "bastion_nic_nsg
   network_security_group_id = azurerm_network_security_group.bastion_nsg.id
 }
 
+data "template_cloudinit_config" "bastion" {
+  gzip          = true
+  base64_encode = true
+
+  part {
+    filename     = "init.cfg"
+    content_type = "text/cloud-config"
+    content = templatefile("${path.module}/templates/bastion.yaml", {
+      ssh_private_key = base64encode(tls_private_key.hashidemos.private_key_pem)
+    })
+  }
+}
+
 resource "azurerm_virtual_machine" "bastion_vm" {
   name                          = "${var.prefix}-bastion-vm"
   location                      = data.azurerm_resource_group.hashidemos.location
@@ -162,6 +175,8 @@ resource "azurerm_virtual_machine" "bastion_vm" {
   vm_size                       = "Standard_B2s"
   delete_os_disk_on_termination = true
   tags                          = local.common_tags
+
+  custom_data = data.template_cloudinit_config.bastion.rendered
 
   identity {
     type = "SystemAssigned"

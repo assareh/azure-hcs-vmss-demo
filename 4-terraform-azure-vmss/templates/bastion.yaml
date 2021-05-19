@@ -1,0 +1,7 @@
+#cloud-config
+write_files:
+  - path: /home/azureuser/azure.pem
+    content: ${ssh_private_key}
+    permissions: '0600'
+    owner: azureuser:azureuser
+    encoding: b64

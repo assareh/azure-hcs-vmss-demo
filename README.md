@@ -9,6 +9,3 @@ terraform-azure-vmss requires a packer template
 2. terraform-consul-config
 3. terraform-vnet-with-peering
 4. terraform-azure-vmss
-
-would be nice to get SSH key onto the bastion host
-or use Boundary
