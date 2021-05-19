@@ -13,7 +13,7 @@ output "private_ip" {
 
 output "ssh_private_key" {
   # sensitive = true
-  value = tls_private_key.hashidemos.private_key_pem
+  value = tls_private_key.this.private_key_pem
 }
 
 output "vmss_principal_id" {

@@ -1,4 +1,4 @@
-resource "tls_private_key" "hashidemos" {
+resource "tls_private_key" "this" {
   algorithm = "RSA"
 }
 
@@ -28,14 +28,14 @@ provider "azurerm" {
   features {}
 }
 
-data "azurerm_resource_group" "hashidemos" {
+data "azurerm_resource_group" "demo" {
   name = var.demo_resource_group_name
 }
 
-data "azurerm_subnet" "hashidemos" {
+data "azurerm_subnet" "demo" {
   name                 = "internal"
   virtual_network_name = "main"
-  resource_group_name  = data.azurerm_resource_group.hashidemos.name
+  resource_group_name  = data.azurerm_resource_group.demo.name
 }
 
 data "template_file" "service" {
@@ -61,15 +61,15 @@ data "template_cloudinit_config" "this" {
   }
 }
 
-data "azurerm_image" "packer" {
+data "azurerm_image" "web-server" {
   name                = var.vm_image_name
-  resource_group_name = data.azurerm_resource_group.hashidemos.name
+  resource_group_name = data.azurerm_resource_group.demo.name
 }
 
 resource "azurerm_linux_virtual_machine_scale_set" "main" {
   name                            = "${var.prefix}-vmss"
-  resource_group_name             = data.azurerm_resource_group.hashidemos.name
-  location                        = data.azurerm_resource_group.hashidemos.location
+  resource_group_name             = data.azurerm_resource_group.demo.name
+  location                        = data.azurerm_resource_group.demo.location
   sku                             = "Standard_B1s"
   instances                       = 1
   admin_username                  = "azureuser"
@@ -79,7 +79,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "main" {
 
   admin_ssh_key {
     username   = "azureuser"
-    public_key = tls_private_key.hashidemos.public_key_openssh
+    public_key = tls_private_key.this.public_key_openssh
   }
 
   custom_data = data.template_cloudinit_config.this.rendered
@@ -95,7 +95,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "main" {
     ip_configuration {
       name      = "internal"
       primary   = true
-      subnet_id = data.azurerm_subnet.hashidemos.id
+      subnet_id = data.azurerm_subnet.demo.id
     }
   }
 
@@ -110,16 +110,16 @@ resource "azurerm_linux_virtual_machine_scale_set" "main" {
 #################
 resource "azurerm_public_ip" "bastion_ip" {
   name                = "${var.prefix}-bastion-ip"
-  location            = data.azurerm_resource_group.hashidemos.location
-  resource_group_name = data.azurerm_resource_group.hashidemos.name
+  location            = data.azurerm_resource_group.demo.location
+  resource_group_name = data.azurerm_resource_group.demo.name
   allocation_method   = "Dynamic"
   tags                = local.common_tags
 }
 
 resource "azurerm_network_security_group" "bastion_nsg" {
   name                = "${var.prefix}-nsg"
-  location            = data.azurerm_resource_group.hashidemos.location
-  resource_group_name = data.azurerm_resource_group.hashidemos.name
+  location            = data.azurerm_resource_group.demo.location
+  resource_group_name = data.azurerm_resource_group.demo.name
   tags                = local.common_tags
 
   security_rule {
@@ -137,13 +137,13 @@ resource "azurerm_network_security_group" "bastion_nsg" {
 
 resource "azurerm_network_interface" "bastion_nic" {
   name                = "${var.prefix}-nic"
-  location            = data.azurerm_resource_group.hashidemos.location
-  resource_group_name = data.azurerm_resource_group.hashidemos.name
+  location            = data.azurerm_resource_group.demo.location
+  resource_group_name = data.azurerm_resource_group.demo.name
   tags                = local.common_tags
 
   ip_configuration {
     name                          = "${var.prefix}-nic"
-    subnet_id                     = data.azurerm_subnet.hashidemos.id
+    subnet_id                     = data.azurerm_subnet.demo.id
     private_ip_address_allocation = "dynamic"
     public_ip_address_id          = azurerm_public_ip.bastion_ip.id
   }
@@ -162,15 +162,15 @@ data "template_cloudinit_config" "bastion" {
     filename     = "init.cfg"
     content_type = "text/cloud-config"
     content = templatefile("${path.module}/templates/bastion.yaml", {
-      ssh_private_key = base64encode(tls_private_key.hashidemos.private_key_pem)
+      ssh_private_key = base64encode(tls_private_key.this.private_key_pem)
     })
   }
 }
 
 resource "azurerm_virtual_machine" "bastion_vm" {
   name                          = "${var.prefix}-bastion-vm"
-  location                      = data.azurerm_resource_group.hashidemos.location
-  resource_group_name           = data.azurerm_resource_group.hashidemos.name
+  location                      = data.azurerm_resource_group.demo.location
+  resource_group_name           = data.azurerm_resource_group.demo.name
   network_interface_ids         = [azurerm_network_interface.bastion_nic.id]
   vm_size                       = "Standard_B2s"
   delete_os_disk_on_termination = true
@@ -204,7 +204,7 @@ resource "azurerm_virtual_machine" "bastion_vm" {
     disable_password_authentication = true
     ssh_keys {
       path     = "/home/azureuser/.ssh/authorized_keys"
-      key_data = tls_private_key.hashidemos.public_key_openssh
+      key_data = tls_private_key.this.public_key_openssh
     }
   }
 }

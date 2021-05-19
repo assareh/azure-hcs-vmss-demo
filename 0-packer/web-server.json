@@ -1,0 +1,61 @@
+{
+  "variables": {
+    "managed_image_name": "web-server",
+    "managed_image_resource_group_name": "assareh-hashidemos",
+    "arm_subscription_id": "{{env `ARM_SUBSCRIPTION_ID`}}",
+    "arm_client_id": "{{env `ARM_CLIENT_ID`}}",
+    "arm_client_secret": "{{env `ARM_CLIENT_SECRET`}}",
+    "owner": "assareh",
+    "se-region": "AMER - West E2 - R2",
+    "purpose": "Demo Terraform",
+    "ttl": "-1"
+  },
+
+"sensitive-variables": ["arm_client_secret"],
+
+  "builders": [
+    {
+      "type": "azure-arm",
+      "subscription_id": "{{user `arm_subscription_id`}}",
+      "client_id": "{{user `arm_client_id`}}",
+      "client_secret": "{{user `arm_client_secret`}}",
+      "managed_image_name": "{{user `managed_image_name`}}",
+      "managed_image_resource_group_name": "{{user `managed_image_resource_group_name`}}",
+      "ssh_username": "ubuntu",
+      "os_type": "Linux",
+      "image_publisher": "Canonical",
+      "image_offer": "UbuntuServer",
+      "image_sku": "18.04-LTS",
+      "azure_tags": {
+        "owner": "{{user `owner`}}",
+        "se-region": "{{user `se-region`}}",
+        "purpose": "{{user `purpose`}}",
+        "ttl": "{{user `ttl`}}"
+      },
+      "location": "West US 2",
+      "vm_size": "Standard_B1s"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "file",
+      "source": "files/deploy_app.sh",
+      "destination": "/home/ubuntu/"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "sudo add-apt-repository universe",
+        "curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -",
+        "sudo apt-add-repository \"deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main\"",
+        "sudo apt-get -y update",
+        "sudo apt-get -y upgrade",
+        "sudo apt-get -y autoremove",
+        "sudo apt-get -y install software-properties-common curl jq nginx vim git wget python vault consul ansible",
+        "sudo chown -R ubuntu:ubuntu /var/www/html",
+        "chmod +x *.sh",
+        "PLACEHOLDER=picsum.photos WIDTH=1920 HEIGHT=1200 PREFIX=Andy ./deploy_app.sh"
+      ]
+    }
+  ]
+}
