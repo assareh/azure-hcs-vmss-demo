@@ -210,8 +210,8 @@ resource "azurerm_virtual_machine" "bastion_vm" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo apt -y install cowsay",
-      "cowsay Mooooooooooo!",
+      "sudo apt-get update",
+      "sudo apt-get upgrade",
     ]
 
     connection {
