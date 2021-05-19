@@ -62,6 +62,14 @@ resource "consul_acl_token" "vm" {
   roles = [consul_acl_role.vm.name]
 }
 
+data "consul_acl_token_secret_id" "vm" {
+    accessor_id = consul_acl_token.vm.id
+}
+
 resource "consul_acl_token" "web" {
   policies = [consul_acl_policy.web.name]
+}
+
+data "consul_acl_token_secret_id" "web" {
+    accessor_id = consul_acl_token.web.id
 }
