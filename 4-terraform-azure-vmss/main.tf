@@ -38,14 +38,6 @@ data "azurerm_subnet" "hashidemos" {
   resource_group_name  = data.azurerm_resource_group.hashidemos.name
 }
 
-# data "template_file" "consul" {
-#   template = file("${path.module}/templates/consul.hcl")
-#   vars = {
-#     consul_addr = trimprefix(data.hcs_cluster.default.consul_external_endpoint_url, "https://")
-#     acl_token   = data.terraform_remote_state.consul.outputs.vm-token
-#   }
-# }
-
 data "template_file" "service" {
   template = file("${path.module}/templates/web-server.json")
   vars = {
@@ -61,6 +53,7 @@ data "template_cloudinit_config" "this" {
     filename     = "init.cfg"
     content_type = "text/cloud-config"
     content = templatefile("${path.module}/templates/userdata.yaml", {
+      acl_token   = data.terraform_remote_state.consul.outputs.vm-token
       consul_conf = data.hcs_cluster.default.consul_config_file
       ca_file     = data.hcs_cluster.default.consul_ca_file
       web_service = base64encode(data.template_file.service.rendered)

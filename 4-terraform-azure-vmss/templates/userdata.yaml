@@ -18,5 +18,6 @@ write_files:
 
 runcmd:
   - sed -i 's+./ca.pem+/etc/consul.d/ca.pem+g' /etc/consul.d/consul.json
+  - sed -i 's+{"acl":{+{"acl":{"tokens":{"agent":"${acl_token}"}+g' /etc/consul.d/consul.json
   - systemctl enable consul
   - systemctl restart consul
