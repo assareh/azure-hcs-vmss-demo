@@ -176,8 +176,6 @@ resource "azurerm_virtual_machine" "bastion_vm" {
   delete_os_disk_on_termination = true
   tags                          = local.common_tags
 
-  custom_data = data.template_cloudinit_config.bastion.rendered
-
   identity {
     type = "SystemAssigned"
   }
@@ -197,8 +195,9 @@ resource "azurerm_virtual_machine" "bastion_vm" {
   }
 
   os_profile {
-    computer_name  = "${var.prefix}-bastion-vm"
     admin_username = "azureuser"
+    computer_name  = "${var.prefix}-bastion-vm"
+    custom_data    = data.template_cloudinit_config.bastion.rendered
   }
 
   os_profile_linux_config {
