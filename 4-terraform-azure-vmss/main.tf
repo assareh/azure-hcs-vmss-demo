@@ -216,7 +216,7 @@ resource "azurerm_virtual_machine" "bastion_vm" {
 
     connection {
       type        = "ssh"
-      user        = var.admin_username
+      user        = "azureuser"
       private_key = tls_private_key.this.private_key_pem
       host        = azurerm_public_ip.bastion_ip.fqdn
     }
