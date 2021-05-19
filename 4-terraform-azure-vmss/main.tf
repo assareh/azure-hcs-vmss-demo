@@ -52,7 +52,7 @@ data "template_cloudinit_config" "this" {
   part {
     filename     = "init.cfg"
     content_type = "text/cloud-config"
-    content = templatefile("${path.module}/templates/userdata.yaml", {
+    content = templatefile("${path.module}/templates/vmss.yaml", {
       acl_token   = data.terraform_remote_state.consul.outputs.vm-token
       consul_conf = data.hcs_cluster.default.consul_config_file
       ca_file     = data.hcs_cluster.default.consul_ca_file
