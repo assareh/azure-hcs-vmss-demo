@@ -19,5 +19,6 @@ write_files:
 runcmd:
   - "sed -i 's/\"./ca.pem\"/\"/etc/consul.d/ca.pem\"/g' /etc/consul.d/consul.json"
   - "cp /etc/consul.d/consul.json /etc/consul.d/consul.txt"
+  - "sed -i 's/.\//\/etc\/consul.d\//g' /etc/consul.d/consul.txt"
   - "systemctl enable consul"
   - "systemctl restart consul"
