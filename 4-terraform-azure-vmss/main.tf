@@ -75,7 +75,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "main" {
   admin_username                  = "azureuser"
   disable_password_authentication = true
 
-  source_image_id = data.azurerm_image.packer.id
+  source_image_id = data.azurerm_image.web-server.id
 
   admin_ssh_key {
     username   = "azureuser"
@@ -207,4 +207,20 @@ resource "azurerm_virtual_machine" "bastion_vm" {
       key_data = tls_private_key.this.public_key_openssh
     }
   }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo apt -y install cowsay",
+      "cowsay Mooooooooooo!",
+    ]
+
+    connection {
+      type        = "ssh"
+      user        = var.admin_username
+      private_key = tls_private_key.this.private_key_pem
+      host        = azurerm_public_ip.bastion_ip.fqdn
+    }
+  }
 }
+
+# https://www.terraform.io/docs/language/resources/provisioners/connection.html#connecting-through-a-bastion-host-with-ssh
