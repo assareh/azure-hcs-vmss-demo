@@ -331,7 +331,7 @@ resource "azurerm_virtual_machine" "bastion_vm" {
   }
 
   provisioner "file" {
-    source      = "files/"
+    source      = "${path.module}/files/"
     destination = "/home/azureuser"
 
     connection {
