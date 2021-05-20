@@ -97,11 +97,10 @@ resource "azurerm_linux_virtual_machine_scale_set" "main" {
       primary                                = true
       subnet_id                              = data.azurerm_subnet.demo.id
       load_balancer_backend_address_pool_ids = [azurerm_lb_backend_address_pool.example.id]
-      load_balancer_inbound_nat_rules_ids    = [azurerm_lb_nat_pool.example.id]
     }
   }
 
-  depends_on = [azurerm_lb_probe.example]
+  depends_on = [azurerm_lb_rule.http]
 
   os_disk {
     storage_account_type = "Standard_LRS"
@@ -146,7 +145,7 @@ resource "azurerm_lb_probe" "example" {
   port                = 80
 }
 
-resource "azurerm_lb_rule" "example" {
+resource "azurerm_lb_rule" "http" {
   name                           = "http-rule"
   resource_group_name            = data.azurerm_resource_group.demo.name
   loadbalancer_id                = azurerm_lb.example.id
