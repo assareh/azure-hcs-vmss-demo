@@ -1,5 +1,5 @@
 resource "random_id" "id" {
-  byte_length = 8
+  byte_length = 1
 }
 
 resource "tls_private_key" "this" {
@@ -117,7 +117,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "main" {
 #######
 
 resource "azurerm_public_ip" "example" {
-  name                = "${var.prefix}-pip"
+  name                = "${var.prefix}-lb-pip-${random_id.id.dec}"
   location            = data.azurerm_resource_group.demo.location
   resource_group_name = data.azurerm_resource_group.demo.name
   allocation_method   = "Static"
@@ -125,7 +125,7 @@ resource "azurerm_public_ip" "example" {
 }
 
 resource "azurerm_lb" "example" {
-  name                = "${var.prefix}-lb"
+  name                = "${var.prefix}-lb-${random_id.id.dec}"
   location            = data.azurerm_resource_group.demo.location
   resource_group_name = data.azurerm_resource_group.demo.name
 
@@ -137,19 +137,19 @@ resource "azurerm_lb" "example" {
 
 resource "azurerm_lb_backend_address_pool" "example" {
   loadbalancer_id = azurerm_lb.example.id
-  name            = "BackEndAddressPool"
+  name            = "${var.prefix}-bap-${random_id.id.dec}"
 }
 
 resource "azurerm_lb_probe" "example" {
   resource_group_name = data.azurerm_resource_group.demo.name
   loadbalancer_id     = azurerm_lb.example.id
-  name                = "http-probe"
+  name                = "${var.prefix}-probe-${random_id.id.dec}"
   protocol            = "Tcp"
   port                = 80
 }
 
 resource "azurerm_lb_rule" "http" {
-  name                           = "http-rule"
+  name                           = "${var.prefix}-rule-${random_id.id.dec}"
   resource_group_name            = data.azurerm_resource_group.demo.name
   loadbalancer_id                = azurerm_lb.example.id
   backend_address_pool_id        = azurerm_lb_backend_address_pool.example.id
@@ -165,13 +165,13 @@ resource "azurerm_lb_rule" "http" {
 #######
 
 resource "azurerm_network_interface" "db_nic" {
-  name                = "${var.prefix}-db-nic"
+  name                = "${var.prefix}-db-nic-${random_id.id.dec}"
   location            = data.azurerm_resource_group.demo.location
   resource_group_name = data.azurerm_resource_group.demo.name
   tags                = local.common_tags
 
   ip_configuration {
-    name                          = "${var.prefix}-db-nic"
+    name                          = "${var.prefix}-db-nic-${random_id.id.dec}"
     subnet_id                     = data.azurerm_subnet.demo.id
     private_ip_address_allocation = "dynamic"
   }
@@ -201,7 +201,7 @@ data "template_cloudinit_config" "db" {
 }
 
 resource "azurerm_virtual_machine" "db" {
-  name                          = "${var.prefix}-db-vm"
+  name                          = "${var.prefix}-db-vm-${random_id.id.dec}"
   location                      = data.azurerm_resource_group.demo.location
   resource_group_name           = data.azurerm_resource_group.demo.name
   network_interface_ids         = [azurerm_network_interface.db_nic.id]
@@ -239,7 +239,7 @@ resource "azurerm_virtual_machine" "db" {
 ## Bastion host #
 #################
 resource "azurerm_public_ip" "bastion_ip" {
-  name                = "${var.prefix}-bastion-ip"
+  name                = "${var.prefix}-bastion-ip-${random_id.id.dec}"
   location            = data.azurerm_resource_group.demo.location
   resource_group_name = data.azurerm_resource_group.demo.name
   allocation_method   = "Static"
@@ -247,7 +247,7 @@ resource "azurerm_public_ip" "bastion_ip" {
 }
 
 resource "azurerm_network_security_group" "bastion_nsg" {
-  name                = "${var.prefix}-nsg"
+  name                = "${var.prefix}-bastion-nsg-${random_id.id.dec}"
   location            = data.azurerm_resource_group.demo.location
   resource_group_name = data.azurerm_resource_group.demo.name
   tags                = local.common_tags
@@ -266,13 +266,13 @@ resource "azurerm_network_security_group" "bastion_nsg" {
 }
 
 resource "azurerm_network_interface" "bastion_nic" {
-  name                = "${var.prefix}-bastion-nic"
+  name                = "${var.prefix}-bastion-nic-${random_id.id.dec}"
   location            = data.azurerm_resource_group.demo.location
   resource_group_name = data.azurerm_resource_group.demo.name
   tags                = local.common_tags
 
   ip_configuration {
-    name                          = "${var.prefix}-bastion-nic"
+    name                          = "${var.prefix}-bastion-nic-${random_id.id.dec}"
     subnet_id                     = data.azurerm_subnet.demo.id
     private_ip_address_allocation = "dynamic"
     public_ip_address_id          = azurerm_public_ip.bastion_ip.id
@@ -298,7 +298,7 @@ data "template_cloudinit_config" "bastion" {
 }
 
 resource "azurerm_virtual_machine" "bastion_vm" {
-  name                          = "${var.prefix}-bastion-vm"
+  name                          = "${var.prefix}-bastion-vm-${random_id.id.dec}"
   location                      = data.azurerm_resource_group.demo.location
   resource_group_name           = data.azurerm_resource_group.demo.name
   network_interface_ids         = [azurerm_network_interface.bastion_nic.id]
