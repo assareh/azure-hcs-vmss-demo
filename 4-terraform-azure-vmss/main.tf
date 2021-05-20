@@ -211,7 +211,8 @@ resource "azurerm_virtual_machine" "bastion_vm" {
   provisioner "remote-exec" {
     inline = [
       "sudo apt-get update",
-      "sudo apt-get upgrade",
+      "sudo apt-get upgrade -y",
+      "sudo apt-get install -y ansible",
     ]
 
     connection {
