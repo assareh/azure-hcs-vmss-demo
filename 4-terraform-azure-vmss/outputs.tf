@@ -1,19 +1,9 @@
 output "bastion_ssh_addr" {
-  value = <<SSH
-
-    Connect to your virtual machine via SSH:
-
-    $ ssh azureuser@${azurerm_public_ip.bastion_ip.ip_address}
-SSH
+  value = "ssh azureuser@${azurerm_public_ip.bastion_ip.ip_address}"
 }
 
 output "lb_http_addr" {
-  value = <<HTTP
-
-    Connect to your application via HTTP:
-
-    $ http://${azurerm_public_ip.example.ip_address}
-HTTP
+  value = "http://${azurerm_public_ip.example.ip_address}"
 }
 
 output "ssh_private_key" {

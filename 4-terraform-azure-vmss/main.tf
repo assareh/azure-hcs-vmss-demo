@@ -352,5 +352,3 @@ resource "azurerm_virtual_machine" "bastion_vm" {
     }
   }
 }
-
-# https://www.terraform.io/docs/language/resources/provisioners/connection.html#connecting-through-a-bastion-host-with-ssh
