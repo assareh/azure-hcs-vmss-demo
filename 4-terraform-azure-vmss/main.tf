@@ -285,19 +285,19 @@ resource "azurerm_network_interface_security_group_association" "bastion_nic_nsg
   network_security_group_id = azurerm_network_security_group.bastion_nsg.id
 }
 
-data "template_cloudinit_config" "bastion" {
-  gzip          = true
-  base64_encode = true
+# data "template_cloudinit_config" "bastion" {
+#   gzip          = true
+#   base64_encode = true
 
-  part {
-    filename     = "init.cfg"
-    content_type = "text/cloud-config"
-    content = templatefile("${path.module}/templates/bastion.yaml", {
-#      ansible_playbook = file("${path.module}/files/helloworld.yaml")
-      ssh_private_key  = base64encode(tls_private_key.this.private_key_pem)
-    })
-  }
-}
+#   part {
+#     filename     = "init.cfg"
+#     content_type = "text/cloud-config"
+#     content = templatefile("${path.module}/templates/bastion.yaml", {
+# #      ansible_playbook = file("${path.module}/files/helloworld.yaml")
+#       ssh_private_key  = base64encode(tls_private_key.this.private_key_pem)
+#     })
+#   }
+# }
 
 resource "azurerm_virtual_machine" "bastion_vm" {
   name                          = "${random_id.id.dec}-bastion-vm"
@@ -325,7 +325,7 @@ resource "azurerm_virtual_machine" "bastion_vm" {
   os_profile {
     admin_username = "azureuser"
     computer_name  = "bastion-vm"
-    custom_data    = data.template_cloudinit_config.bastion.rendered
+    # custom_data    = data.template_cloudinit_config.bastion.rendered
   }
 
   os_profile_linux_config {
@@ -336,12 +336,24 @@ resource "azurerm_virtual_machine" "bastion_vm" {
     }
   }
 
+  provisioner "file" {
+    source      = "files/"
+    destination = "/home/azureuser/"
+
+    connection {
+      type        = "ssh"
+      user        = "azureuser"
+      private_key = tls_private_key.this.private_key_pem
+      host        = azurerm_public_ip.bastion_ip.ip_address
+    }
+  }
+
   provisioner "remote-exec" {
     inline = [
       "sudo apt-get update",
       "sudo apt-get upgrade -y",
       "sudo apt-get install -y ansible",
-#      "ansible-playbook helloworld.yaml",
+      "ansible-playbook helloworld.yaml",
     ]
 
     connection {
