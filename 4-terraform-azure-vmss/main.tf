@@ -93,17 +93,73 @@ resource "azurerm_linux_virtual_machine_scale_set" "main" {
     primary = true
 
     ip_configuration {
-      name      = "internal"
-      primary   = true
-      subnet_id = data.azurerm_subnet.demo.id
+      name                                   = "internal"
+      primary                                = true
+      subnet_id                              = data.azurerm_subnet.demo.id
+      load_balancer_backend_address_pool_ids = [azurerm_lb_backend_address_pool.example.id]
+      load_balancer_inbound_nat_rules_ids    = [azurerm_lb_nat_pool.example.id]
     }
   }
+
+  depends_on = [azurerm_lb_probe.example]
 
   os_disk {
     storage_account_type = "Standard_LRS"
     caching              = "ReadWrite"
   }
 }
+
+#######
+## LB #
+#######
+
+resource "azurerm_public_ip" "example" {
+  name                = "${var.prefix}-pip"
+  location            = azurerm_resource_group.demo.location
+  resource_group_name = azurerm_resource_group.demo.name
+  allocation_method   = "Dynamic"
+  domain_name_label   = azurerm_resource_group.demo.name
+}
+
+resource "azurerm_lb" "example" {
+  name                = "${var.prefix}-lb"
+  location            = azurerm_resource_group.demo.location
+  resource_group_name = azurerm_resource_group.demo.name
+
+  frontend_ip_configuration {
+    name                 = "PublicIPAddress"
+    public_ip_address_id = azurerm_public_ip.example.id
+  }
+}
+
+resource "azurerm_lb_backend_address_pool" "example" {
+  resource_group_name = azurerm_resource_group.demo.name
+  loadbalancer_id     = azurerm_lb.example.id
+  name                = "BackEndAddressPool"
+}
+
+resource "azurerm_lb_probe" "example" {
+  resource_group_name = azurerm_resource_group.demo.name
+  loadbalancer_id     = azurerm_lb.example.id
+  name                = "http-probe"
+  protocol            = "Tcp"
+  port                = 80
+}
+
+resource "azurerm_lb_nat_pool" "example" {
+  resource_group_name            = azurerm_resource_group.demo.name
+  name                           = "http"
+  loadbalancer_id                = azurerm_lb.example.id
+  protocol                       = "Tcp"
+  frontend_port_start            = 8000
+  frontend_port_end              = 8100
+  backend_port                   = 80
+  frontend_ip_configuration_name = "PublicIPAddress"
+}
+
+#######
+## DB #
+#######
 
 resource "azurerm_network_interface" "db_nic" {
   name                = "${var.prefix}-db-nic"
@@ -136,7 +192,7 @@ data "template_cloudinit_config" "db" {
       acl_token   = data.terraform_remote_state.consul.outputs.vm-token
       ca_file     = data.hcs_cluster.default.consul_ca_file
       consul_conf = data.hcs_cluster.default.consul_config_file
-      db = base64encode(data.template_file.db.rendered)
+      db          = base64encode(data.template_file.db.rendered)
     })
   }
 }

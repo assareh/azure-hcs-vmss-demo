@@ -7,8 +7,13 @@ output "bastion_ssh_addr" {
 SSH
 }
 
-output "private_ip" {
-  value = azurerm_network_interface.bastion_nic.private_ip_address
+output "lb_http_addr" {
+  value = <<HTTP
+
+    Connect to your application via HTTP:
+
+    $ http://${azurerm_public_ip.example.ip_address}
+HTTP
 }
 
 output "ssh_private_key" {
