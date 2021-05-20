@@ -330,17 +330,17 @@ resource "azurerm_virtual_machine" "bastion_vm" {
     }
   }
 
-  provisioner "file" {
-    source      = "${path.module}/files/"
-    destination = "/home/azureuser"
+  # provisioner "file" {
+  #   source      = "${path.module}/files/"
+  #   destination = "/home/azureuser"
 
-    connection {
-      type        = "ssh"
-      user        = "azureuser"
-      private_key = tls_private_key.this.private_key_pem
-      host        = azurerm_public_ip.bastion_ip.ip_address
-    }
-  }
+  #   connection {
+  #     type        = "ssh"
+  #     user        = "azureuser"
+  #     private_key = tls_private_key.this.private_key_pem
+  #     host        = azurerm_public_ip.bastion_ip.ip_address
+  #   }
+  # }
 
   provisioner "remote-exec" {
     inline = [
