@@ -176,15 +176,11 @@ resource "azurerm_virtual_machine" "bastion_vm" {
   delete_os_disk_on_termination = true
   tags                          = local.common_tags
 
-  identity {
-    type = "SystemAssigned"
-  }
-
   storage_os_disk {
     name              = "OsDisk"
     caching           = "ReadWrite"
     create_option     = "FromImage"
-    managed_disk_type = "Premium_LRS"
+    managed_disk_type = "Standard_LRS"
   }
 
   storage_image_reference {
