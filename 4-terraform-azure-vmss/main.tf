@@ -117,7 +117,7 @@ resource "azurerm_public_ip" "example" {
   name                = "${var.prefix}-pip"
   location            = data.azurerm_resource_group.demo.location
   resource_group_name = data.azurerm_resource_group.demo.name
-  allocation_method   = "Dynamic"
+  allocation_method   = "Static"
   domain_name_label   = data.azurerm_resource_group.demo.name
 }
 
