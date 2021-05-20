@@ -50,6 +50,16 @@ service "web" {
     RULE
 }
 
+resource "consul_acl_policy" "db" {
+  name        = "db"
+  datacenters = ["dc1"]
+  rules       = <<-RULE
+service "db" {
+  policy = "write"
+}
+    RULE
+}
+
 resource "consul_acl_role" "vm" {
   name = "vm"
 
@@ -72,4 +82,12 @@ resource "consul_acl_token" "web" {
 
 data "consul_acl_token_secret_id" "web" {
     accessor_id = consul_acl_token.web.id
+}
+
+resource "consul_acl_token" "db" {
+  policies = [consul_acl_policy.db.name]
+}
+
+data "consul_acl_token_secret_id" "db" {
+    accessor_id = consul_acl_token.db.id
 }
