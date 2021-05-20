@@ -293,7 +293,7 @@ data "template_cloudinit_config" "bastion" {
     filename     = "init.cfg"
     content_type = "text/cloud-config"
     content = templatefile("${path.module}/templates/bastion.yaml", {
-      ansible_playbook = file("${path.module}/files/helloworld.yaml")
+#      ansible_playbook = file("${path.module}/files/helloworld.yaml")
       ssh_private_key  = base64encode(tls_private_key.this.private_key_pem)
     })
   }
@@ -336,19 +336,19 @@ resource "azurerm_virtual_machine" "bastion_vm" {
     }
   }
 
-  # provisioner "remote-exec" {
-  #   inline = [
-  #     "sudo apt-get update",
-  #     "sudo apt-get upgrade -y",
-  #     "sudo apt-get install -y ansible",
-  #     "ansible-playbook helloworld.yaml",
-  #   ]
+  provisioner "remote-exec" {
+    inline = [
+      "sudo apt-get update",
+      "sudo apt-get upgrade -y",
+      "sudo apt-get install -y ansible",
+#      "ansible-playbook helloworld.yaml",
+    ]
 
-  #   connection {
-  #     type        = "ssh"
-  #     user        = "azureuser"
-  #     private_key = tls_private_key.this.private_key_pem
-  #     host        = azurerm_public_ip.bastion_ip.ip_address
-  #   }
-  # }
+    connection {
+      type        = "ssh"
+      user        = "azureuser"
+      private_key = tls_private_key.this.private_key_pem
+      host        = azurerm_public_ip.bastion_ip.ip_address
+    }
+  }
 }
