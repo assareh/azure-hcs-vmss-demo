@@ -1,3 +1,7 @@
+resource "random_id" "id" {
+  byte_length = 8
+}
+
 resource "tls_private_key" "this" {
   algorithm = "RSA"
 }
@@ -67,7 +71,7 @@ data "azurerm_image" "web-server" {
 }
 
 resource "azurerm_linux_virtual_machine_scale_set" "main" {
-  name                            = "${var.prefix}-vmss"
+  name                            = "${var.prefix}-vmss-${random_id.id.dec}"
   resource_group_name             = data.azurerm_resource_group.demo.name
   location                        = data.azurerm_resource_group.demo.location
   sku                             = "Standard_B1s"
@@ -124,7 +128,6 @@ resource "azurerm_lb" "example" {
   name                = "${var.prefix}-lb"
   location            = data.azurerm_resource_group.demo.location
   resource_group_name = data.azurerm_resource_group.demo.name
-  # sku                 = "Standard"
 
   frontend_ip_configuration {
     name                 = "PublicIPAddress"
