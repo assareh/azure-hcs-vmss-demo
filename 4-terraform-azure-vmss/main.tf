@@ -124,7 +124,7 @@ resource "azurerm_lb" "example" {
   name                = "${var.prefix}-lb"
   location            = data.azurerm_resource_group.demo.location
   resource_group_name = data.azurerm_resource_group.demo.name
-  sku                 = "Standard"
+  # sku                 = "Standard"
 
   frontend_ip_configuration {
     name                 = "PublicIPAddress"
