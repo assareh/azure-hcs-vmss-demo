@@ -332,7 +332,7 @@ resource "azurerm_virtual_machine" "bastion_vm" {
 
   provisioner "file" {
     source      = "files/"
-    destination = "/home/azureuser/"
+    destination = "/home/azureuser"
 
     connection {
       type        = "ssh"
