@@ -285,20 +285,6 @@ resource "azurerm_network_interface_security_group_association" "bastion_nic_nsg
   network_security_group_id = azurerm_network_security_group.bastion_nsg.id
 }
 
-# data "template_cloudinit_config" "bastion" {
-#   gzip          = true
-#   base64_encode = true
-
-#   part {
-#     filename     = "init.cfg"
-#     content_type = "text/cloud-config"
-#     content = templatefile("${path.module}/templates/bastion.yaml", {
-# #      ansible_playbook = file("${path.module}/files/helloworld.yaml")
-#       ssh_private_key  = base64encode(tls_private_key.this.private_key_pem)
-#     })
-#   }
-# }
-
 resource "azurerm_virtual_machine" "bastion_vm" {
   name                          = "${random_id.id.dec}-bastion-vm"
   location                      = data.azurerm_resource_group.demo.location
@@ -325,7 +311,6 @@ resource "azurerm_virtual_machine" "bastion_vm" {
   os_profile {
     admin_username = "azureuser"
     computer_name  = "bastion-vm"
-    # custom_data    = data.template_cloudinit_config.bastion.rendered
   }
 
   os_profile_linux_config {
