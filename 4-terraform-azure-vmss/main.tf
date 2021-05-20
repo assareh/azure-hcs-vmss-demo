@@ -206,7 +206,7 @@ resource "azurerm_virtual_machine" "db" {
   tags                          = local.common_tags
 
   storage_os_disk {
-    name              = "OsDisk"
+    name              = "DbOsDisk"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
@@ -303,7 +303,7 @@ resource "azurerm_virtual_machine" "bastion_vm" {
   tags                          = local.common_tags
 
   storage_os_disk {
-    name              = "OsDisk"
+    name              = "BastionOsDisk"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
