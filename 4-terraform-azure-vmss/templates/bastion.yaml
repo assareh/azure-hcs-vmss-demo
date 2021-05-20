@@ -5,3 +5,11 @@ write_files:
     permissions: '0600'
     owner: azureuser:azureuser
     encoding: b64
+  - path: /home/azureuser/helloworld.yaml
+    content: ${ansible_playbook}
+    permissions: '0644'
+    owner: azureuser:azureuser
+    encoding: b64
+
+runcmd:
+  - chown azureuser:azureuser /home/azureuser/azure.pem
