@@ -10,6 +10,3 @@ write_files:
     permissions: '0644'
     owner: azureuser:azureuser
     encoding: b64
-
-runcmd:
-  - chown azureuser:azureuser /home/azureuser/azure.pem
