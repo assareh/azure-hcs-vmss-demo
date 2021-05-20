@@ -1,0 +1,24 @@
+#cloud-config
+write_files:
+  - path: /etc/consul.d/consul.json
+    content: ${consul_conf}
+    permissions: '0644'
+    owner: consul:consul
+    encoding: b64
+  - path: /etc/consul.d/ca.pem
+    content: ${ca_file}
+    permissions: '0644'
+    owner: consul:consul
+    encoding: b64
+  - path: /etc/consul.d/db.json
+    content: ${db}
+    permissions: '0644'
+    owner: consul:consul
+    encoding: b64
+
+runcmd:
+  - sed -i 's+{"acl":{+{"acl":{"tokens":{"agent":"${acl_token}"},+g' /etc/consul.d/consul.json
+  - sed -i 's+./ca.pem+/etc/consul.d/ca.pem+g' /etc/consul.d/consul.json
+  - sed -i 's+"dc1","encrypt"+"dc1","enable_local_script_checks":true,"encrypt"+g' /etc/consul.d/consul.json
+  - systemctl enable consul
+  - systemctl restart consul

@@ -1,0 +1,11 @@
+{
+    "service": {
+      "Name": "db",
+      "Port": 80,
+      "token": "${acl_token}",
+      "check": {
+        "args": ["curl", "localhost"],
+        "interval": "5s"
+      }
+    }
+  }
