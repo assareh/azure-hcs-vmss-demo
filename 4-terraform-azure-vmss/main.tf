@@ -125,6 +125,7 @@ resource "azurerm_lb" "example" {
   name                = "${var.prefix}-lb"
   location            = data.azurerm_resource_group.demo.location
   resource_group_name = data.azurerm_resource_group.demo.name
+  sku                 = "Standard"
 
   frontend_ip_configuration {
     name                 = "PublicIPAddress"
@@ -133,8 +134,8 @@ resource "azurerm_lb" "example" {
 }
 
 resource "azurerm_lb_backend_address_pool" "example" {
-  loadbalancer_id     = azurerm_lb.example.id
-  name                = "BackEndAddressPool"
+  loadbalancer_id = azurerm_lb.example.id
+  name            = "BackEndAddressPool"
 }
 
 resource "azurerm_lb_probe" "example" {
@@ -145,13 +146,14 @@ resource "azurerm_lb_probe" "example" {
   port                = 80
 }
 
-resource "azurerm_lb_nat_pool" "example" {
+resource "azurerm_lb_rule" "example" {
+  name                           = "http-rule"
   resource_group_name            = data.azurerm_resource_group.demo.name
-  name                           = "http"
   loadbalancer_id                = azurerm_lb.example.id
+  backend_address_pool_id        = azurerm_lb_backend_address_pool.example.id
+  probe_id                       = azurerm_lb_probe.example.id
   protocol                       = "Tcp"
-  frontend_port_start            = 8000
-  frontend_port_end              = 8100
+  frontend_port                  = 80
   backend_port                   = 80
   frontend_ip_configuration_name = "PublicIPAddress"
 }
@@ -345,8 +347,8 @@ resource "azurerm_virtual_machine" "bastion_vm" {
   provisioner "remote-exec" {
     inline = [
       "sudo apt-get update",
-#      "sudo apt-get install -y ansible",
-#      "ansible-playbook helloworld.yaml",
+      #      "sudo apt-get install -y ansible",
+      #      "ansible-playbook helloworld.yaml",
     ]
 
     connection {
