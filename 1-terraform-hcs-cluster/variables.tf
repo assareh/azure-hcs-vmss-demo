@@ -20,5 +20,6 @@ locals {
     ttl                = "-1"   # hours
     terraform          = "true" # true/false
     hc-internet-facing = "true" # true/false
+    DoNotDelete        = "true" # true/false
   }
 }
